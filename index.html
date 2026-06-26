@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALGID | المجموعة الجزائرية للاستثمار والتطوير</title>
+    <!-- تضمين Tailwind CSS للتنسيق الحديث -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- خط Cairo المخصص للغة العربية -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- مكتبة الأيقونات FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            DEFAULT: '#0b2c56',
+                            light: '#153e70',
+                            dark: '#061933'
+                        },
+                        tealCustom: {
+                            DEFAULT: '#149d8c',
+                            light: '#1bc2ad',
+                            dark: '#0e7a6d'
+                        },
+                        iceBg: '#f4f7f6'
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            overflow-x: hidden;
+        }
+        /* تصميم نظام السحب والتبديل الأفقي بين الصفحات */
+        .slider-wrapper {
+            display: flex;
+            width: 600%; /* يعتمد على عدد الصفحات الستة الرئيسية */
+            transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
+        }
+        .page-panel {
+            width: 16.666%; /* تقسيم المساحة بالتساوي على 6 صفحات */
+            flex-shrink: 0;
+            min-height: calc(100vh - 80px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 relative min-h-screen flex flex-col">
+
+    <!-- زر الواتساب العائم -->
+    <a href="https://wa.me/213557183255" target="_blank" class="fixed bottom-6 right-6 bg-[#25d366] text-white p-4 rounded-full shadow-2xl z-50 hover:bg-[#20ba5a] transition duration-300 flex items-center justify-center text-2xl animate-bounce">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- 1. شريط التنقل (Navbar) -->
+    <nav class="fixed w-full bg-white/95 backdrop-blur shadow-md z-50 h-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+            <!-- الشعار والاسم -->
+            <div class="flex items-center space-x-reverse space-x-3">
+                <div class="w-12 h-12 bg-navy flex flex-col items-center justify-center rounded-lg text-white font-bold text-xs border-2 border-tealCustom">
+                    <span class="leading-none text-sm tracking-widest">ALGID</span>
+                    <span class="text-[8px] text-tealCustom">GROUP</span>
+                </div>
+                <div>
+                    <span class="block text-navy font-bold text-sm md:text-base leading-tight">المجموعة الجزائرية</span>
+                    <span class="block text-tealCustom font-semibold text-xs md:text-sm">للاستثمار والتطوير</span>
+                </div>
+            </div>
+
+            <!-- أزرار التحكم العلوية بالصفحات (تبديل تفاعلي) -->
+            <div class="hidden lg:flex space-x-reverse space-x-1 text-sm font-semibold text-navy bg-gray-100 p-1.5 rounded-xl">
+                <button onclick="goToPage(0)" id="nav-btn-0" class="nav-btn bg-tealCustom text-white px-4 py-2 rounded-lg transition">الرئيسية</button>
+                <button onclick="goToPage(1)" id="nav-btn-1" class="nav-btn hover:bg-gray-200 px-4 py-2 rounded-lg transition">من نحن</button>
+                <button onclick="goToPage(2)" id="nav-btn-2" class="nav-btn hover:bg-gray-200 px-4 py-2 rounded-lg transition">خدماتنا</button>
+                <button onclick="goToPage(3)" id="nav-btn-3" class="nav-btn hover:bg-gray-200 px-4 py-2 rounded-lg transition">إقاماتنا وسكناتنا</button>
+                <button onclick="goToPage(4)" id="nav-btn-4" class="nav-btn hover:bg-gray-200 px-4 py-2 rounded-lg transition">بناء الخواص</button>
+                <button onclick="goToPage(5)" id="nav-btn-5" class="nav-btn hover:bg-gray-200 px-4 py-2 rounded-lg transition">اتصل بنا</button>
+            </div>
+
+            <!-- قنوات الاتصال السريع -->
+            <div class="hidden lg:flex items-center space-x-reverse space-x-2">
+                <a href="tel:0557183255" class="bg-navy hover:bg-navy-light text-white px-4 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-reverse space-x-2">
+                    <i class="fa-solid fa-phone"></i>
+                    <span dir="ltr">0557 18 32 55</span>
+                </a>
+            </div>
+
+            <!-- زر القائمة للهواتف -->
+            <div class="lg:hidden flex items-center space-x-3">
+                <a href="tel:0557183255" class="text-navy text-lg"><i class="fa-solid fa-phone"></i></a>
+                <button id="mobile-menu-btn" class="text-navy focus:outline-none text-2xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- القائمة المنسدلة للهواتف -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-100 px-4 pt-2 pb-6 space-y-3 shadow-inner">
+            <button onclick="goToPage(0); toggleMobileMenu()" class="block w-full text-right text-navy font-semibold hover:text-tealCustom py-2">الرئيسية</button>
+            <button onclick="goToPage(1); toggleMobileMenu()" class="block w-full text-right text-navy font-semibold hover:text-tealCustom py-2">من نحن</button>
+            <button onclick="goToPage(2); toggleMobileMenu()" class="block w-full text-right text-navy font-semibold hover:text-tealCustom py-2">خدماتنا</button>
+            <button onclick="goToPage(3); toggleMobileMenu()" class="block w-full text-right text-navy font-semibold hover:text-tealCustom py-2">إقاماتنا وسكناتنا</button>
+            <button onclick="goToPage(4); toggleMobileMenu()" class="block w-full text-right text-navy font-semibold hover:text-tealCustom py-2">بناء الخواص</button>
+            <button onclick="goToPage(5); toggleMobileMenu()" class="block w-full text-right text-navy font-semibold hover:text-tealCustom py-2">اتصل بنا</button>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي القابل للسحب الأفقي -->
+    <main class="flex-grow pt-20 overflow-hidden relative w-full">
+        <div class="slider-wrapper" id="main-slider">
+
+            <!-- الصفحة 0: الرئيسية (Home) -->
+            <div class="page-panel bg-navy text-white relative flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 bg-cover bg-center mix-blend-overlay opacity-30" style="background-image: url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');"></div>
+                <div class="relative max-w-4xl mx-auto px-6 text-center z-10 py-12">
+                    <span class="inline-block bg-tealCustom/20 text-tealCustom-light border border-tealCustom/30 px-4 py-1.5 rounded-full text-sm font-semibold mb-6">ALGID | Think Values (نُفكر بالقيم)</span>
+                    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-6">
+                        رؤية رائدة في قطاع <br>
+                        <span class="text-tealCustom">الاستثمار والتطوير العقاري بالجزائر</span>
+                    </h1>
+                    <p class="text-sm md:text-lg text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+                        في المجموعة الجزائرية للاستثمار والتطوير ALGID، نقوم بتشييد مجمعات سكنية حديثة تضمن الاستقرار وتمنحكم تجربة معيشية آمنة في بيئة متكاملة المرافق.
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                        <button onclick="goToPage(3)" class="w-full sm:w-auto bg-tealCustom hover:bg-tealCustom-dark text-white px-8 py-3.5 rounded-xl font-bold text-sm transition">عرض السكنات المتاحة حالياً</button>
+                        <button onclick="goToPage(4)" class="w-full sm:w-auto bg-white/10 hover:bg-white/20 border border-white/30 text-white px-8 py-3.5 rounded-xl font-bold text-sm transition">بناء الخواص وتسيير المشاريع</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الصفحة 1: من نحن (About Us) -->
+            <div class="page-panel bg-white flex items-center py-16">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <span class="text-tealCustom font-bold text-sm uppercase tracking-wider mb-2 block">عن المجموعة</span>
+                            <h2 class="text-3xl font-extrabold text-navy mb-6">المجموعة الجزائرية للاستثمار والتطوير ALGID</h2>
+                            <p class="text-gray-600 mb-6 leading-relaxed text-justify text-sm">
+                                انطلقت المجموعة بخطى واثقة لتصبح من ركائز البناء والتطوير العقاري والاستثماري في الجزائر. نحن نسعى لتقديم سكنات عصرية متكاملة وحلول استثمارية مدروسة تخدم المجتمع والاقتصاد المحلي، مستندين دائماً على الابتكار والقيم الأخلاقية في العمل.
+                            </p>
+                            <div class="space-y-4">
+                                <div class="flex items-start space-x-reverse space-x-4 p-4 bg-iceBg rounded-xl border-r-4 border-tealCustom">
+                                    <div class="text-tealCustom text-2xl mt-1"><i class="fa-solid fa-gem"></i></div>
+                                    <div>
+                                        <h4 class="font-bold text-navy text-sm mb-1">شعارنا وقيمنا (Think Values)</h4>
+                                        <p class="text-gray-600 text-xs">نضع قيم الشفافية والالتزام بمواعيد التسليم والجودة الإنشائية كأولوية قصوى في جميع خططنا.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-reverse space-x-4 p-4 bg-iceBg rounded-xl border-r-4 border-navy">
+                                    <div class="text-navy text-2xl mt-1"><i class="fa-solid fa-map-location-dot"></i></div>
+                                    <div>
+                                        <h4 class="font-bold text-navy text-sm mb-1">تنمية مستدامة ببلديات العاصمة</h4>
+                                        <p class="text-gray-600 text-xs">نغطي مشاريعنا الإنشائية في رويبة، حمادي، بن مرابط، بن رضوان، وبلدية الشراقة.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative hidden lg:block">
+                            <div class="aspect-square rounded-2xl overflow-hidden shadow-xl">
+                                <img src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="مشاريع الجزائر السكنية" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الصفحة 2: خدماتنا (Services) -->
+            <div class="page-panel bg-iceBg flex items-center py-16">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    <div class="text-center max-w-3xl mx-auto mb-12">
+                        <span class="text-tealCustom font-bold text-sm uppercase tracking-wider mb-2 block">رؤية متكاملة</span>
+                        <h2 class="text-3xl font-extrabold text-navy">الخدمات الاستثمارية والعقارية</h2>
+                        <p class="text-gray-500 mt-2 text-sm">نعمل على تقديم منظومة خدمات تغطي الاستثمار، الإعمار، وإدارة الأصول العقارية بكفاءة تامة.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="bg-white p-6 rounded-xl shadow border border-gray-100 hover:border-tealCustom transition">
+                            <div class="w-12 h-12 bg-tealCustom/10 text-tealCustom flex items-center justify-center rounded-lg text-2xl mb-4">
+                                <i class="fa-solid fa-building-user"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-navy mb-2">التطوير العقاري</h3>
+                            <p class="text-gray-600 text-xs leading-relaxed">
+                                تشييد وتصميم المجمعات السكنية المعاصرة وتجهيزها بأعلى مواصفات الراحة المنزلية والأمان والجوار المناسب للعائلات.
+                            </p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow border border-gray-100 hover:border-navy transition">
+                            <div class="w-12 h-12 bg-navy/5 text-navy flex items-center justify-center rounded-lg text-2xl mb-4">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-navy mb-2">تسيير مشاريع الخواص</h3>
+                            <p class="text-gray-600 text-xs leading-relaxed">
+                                خدمة متكاملة للملاك ذوي الأراضي والتمويل الخاص لبناء عقاراتهم وتسييرها هندسياً وقانونياً وإدارياً بشكل احترافي مريح.
+                            </p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow border border-gray-100 hover:border-tealCustom transition">
+                            <div class="w-12 h-12 bg-tealCustom/10 text-tealCustom flex items-center justify-center rounded-lg text-2xl mb-4">
+                                <i class="fa-solid fa-handshake"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-navy mb-2">تسيير وإدارة الممتلكات</h3>
+                            <p class="text-gray-600 text-xs leading-relaxed">
+                                رعاية صيانة الأبنية وتشغيل الإقامات والمجمعات نيابة عن الملاك والمستثمرين لضمان ديمومة المرافق وجودة العقار الاستثماري.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الصفحة 3: إقاماتنا وسكناتنا (Residences & Statuses) -->
+            <div class="page-panel bg-white flex items-center py-16 overflow-y-auto">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    <div class="text-center max-w-3xl mx-auto mb-10">
+                        <span class="text-tealCustom font-bold text-sm uppercase tracking-wider mb-1 block">محفظة أعمالنا الفخرية</span>
+                        <h2 class="text-3xl font-extrabold text-navy">حالة السكنات في إقاماتنا العقارية بالجزائر</h2>
+                        <p class="text-gray-500 mt-2 text-xs">يمكنك حجز شقتك المتبقية أو التواصل مباشرة مع مكتب المبيعات بخصوص المشاريع القادمة.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        
+                        <!-- 1. إقامة السكينة (مباعة بالكامل) -->
+                        <div class="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-col justify-between">
+                            <div class="relative h-48 bg-gray-100">
+                                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="إقامة السكينة" class="w-full h-full object-cover">
+                                <span class="absolute top-3 right-3 bg-red-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow">بيعت بالكامل 100%</span>
+                            </div>
+                            <div class="p-5 flex-grow">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-[11px] text-tealCustom font-bold"><i class="fa-solid fa-map-marker-alt ml-1"></i>بلدية حمادي</span>
+                                    <span class="text-xs text-gray-500 font-bold">16 وحدة سكنية</span>
+                                </div>
+                                <h3 class="text-base font-bold text-navy mb-2">إقامة "السكينة"</h3>
+                                <p class="text-gray-500 text-xs leading-relaxed">إقامة متميزة وهادئة، تم إنجازها وتسليمها بالكامل للملاك الجدد ببلدية حمادي.</p>
+                            </div>
+                            <div class="p-5 pt-0">
+                                <button disabled class="w-full bg-gray-200 text-gray-400 py-2.5 rounded-lg text-xs font-bold cursor-not-allowed">مغلق (بيعت بالكامل)</button>
+                            </div>
+                        </div>
+
+                        <!-- 2. إقامة الألفة (مباعة بالكامل) -->
+                        <div class="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-col justify-between">
+                            <div class="relative h-48 bg-gray-100">
+                                <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="إقامة الألفة" class="w-full h-full object-cover">
+                                <span class="absolute top-3 right-3 bg-red-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow">بيعت بالكامل 100%</span>
+                            </div>
+                            <div class="p-5 flex-grow">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-[11px] text-tealCustom font-bold"><i class="fa-solid fa-map-marker-alt ml-1"></i>حي بن مرابط / بن رضوان</span>
+                                    <span class="text-xs text-gray-500 font-bold">4 سكنات عائلية</span>
+                                </div>
+                                <h3 class="text-base font-bold text-navy mb-2">إقامة "الألفة"</h3>
+                                <p class="text-gray-500 text-xs leading-relaxed">مجمع سكني عائلي مصغر وهادئ جداً، تم بيعه بالكامل وتجهيزه وتأمينه.</p>
+                            </div>
+                            <div class="p-5 pt-0">
+                                <button disabled class="w-full bg-gray-200 text-gray-400 py-2.5 rounded-lg text-xs font-bold cursor-not-allowed">مغلق (بيعت بالكامل)</button>
+                            </div>
+                        </div>
+
+                        <!-- 3. إقامة تازيري (متاح شقق) -->
+                        <div class="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-col justify-between">
+                            <div class="relative h-48 bg-gray-100">
+                                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="إقامة تازيري" class="w-full h-full object-cover">
+                                <span class="absolute top-3 right-3 bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow">شبه مكتمل - متوفر شقق</span>
+                            </div>
+                            <div class="p-5 flex-grow">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-[11px] text-tealCustom font-bold"><i class="fa-solid fa-map-marker-alt ml-1"></i>بلدية حمادي</span>
+                                    <span class="text-xs text-red-600 font-bold"><i class="fa-solid fa-circle-exclamation ml-1"></i>متبقي 3 شقق فقط!</span>
+                                </div>
+                                <h3 class="text-base font-bold text-navy mb-2">إقامة "تازيري"</h3>
+                                <p class="text-gray-500 text-xs leading-relaxed">السعة الكلية 13 وحدة سكنية. متبقي 3 شقق فاخرة قيد وضع اللمسات التزيينية الأخيرة والتسليم.</p>
+                            </div>
+                            <div class="p-5 pt-0">
+                                <a href="https://wa.me/213557183255?text=أود%20الاستفسار%20عن%20الشقق%20المتبقية%20في%20إقامة%20تازيري" target="_blank" class="block w-full text-center bg-tealCustom hover:bg-tealCustom-dark text-white py-2.5 rounded-lg text-xs font-bold transition">احجز شقتك الآن عبر واتساب</a>
+                            </div>
+                        </div>
+
+                        <!-- 4. إقامة الأنس (متاح شقق) -->
+                        <div class="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-col justify-between">
+                            <div class="relative h-48 bg-gray-100">
+                                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="إقامة الأنس" class="w-full h-full object-cover">
+                                <span class="absolute top-3 right-3 bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow">متوفر شقق للبيع</span>
+                            </div>
+                            <div class="p-5 flex-grow">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-[11px] text-tealCustom font-bold"><i class="fa-solid fa-map-marker-alt ml-1"></i>حي بن مرابط / بن رضوان</span>
+                                    <span class="text-xs text-red-600 font-bold"><i class="fa-solid fa-circle-exclamation ml-1"></i>متبقي 8 شقق!</span>
+                                </div>
+                                <h3 class="text-base font-bold text-navy mb-2">إقامة "الأنس"</h3>
+                                <p class="text-gray-500 text-xs leading-relaxed">إقامة كبيرة سعتها الإجمالية 36 شقة. متبقي 8 شقق ممتازة للبيع والتسجيل فوري وعصري.</p>
+                            </div>
+                            <div class="p-5 pt-0">
+                                <a href="https://wa.me/213557183255?text=أود%20الاستفسار%20عن%20الشقق%20المتبقية%20في%20إقامة%20الأنس" target="_blank" class="block w-full text-center bg-tealCustom hover:bg-tealCustom-dark text-white py-2.5 rounded-lg text-xs font-bold transition">احجز شقتك الآن عبر واتساب</a>
+                            </div>
+                        </div>
+
+                        <!-- 5. إقامة الجنان (متاح شقق) -->
+                        <div class="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-col justify-between">
+                            <div class="relative h-48 bg-gray-100">
+                                <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="إقامة الجنان" class="w-full h-full object-cover">
+                                <span class="absolute top-3 right-3 bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow">شبه مكتمل - متوفر شقق</span>
+                            </div>
+                            <div class="p-5 flex-grow">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-[11px] text-tealCustom font-bold"><i class="fa-solid fa-map-marker-alt ml-1"></i>حي بن مرابط / بن رضوان</span>
+                                    <span class="text-xs text-red-600 font-bold"><i class="fa-solid fa-circle-exclamation ml-1"></i>متبقي شقتين (F4)!</span>
+                                </div>
+                                <h3 class="text-base font-bold text-navy mb-2">إقامة "الجنان"</h3>
+                                <p class="text-gray-500 text-xs leading-relaxed">إقامة فخمة من 14 وحدة سكنية. تبقت شقتين فقط من نوع F4 بمساحة وإطلالة ممتازة.</p>
+                            </div>
+                            <div class="p-5 pt-0">
+                                <a href="https://wa.me/213557183255?text=أود%20الاستفسار%20عن%20الشقق%20المتبقية%20في%20إقامة%20الجنان" target="_blank" class="block w-full text-center bg-tealCustom hover:bg-tealCustom-dark text-white py-2.5 rounded-lg text-xs font-bold transition">احجز شقتك الآن عبر واتساب</a>
+                            </div>
+                        </div>
+
+                        <!-- 6. إقامة الشراقة الكبرى (تحت الدراسة) -->
+                        <div class="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-col justify-between">
+                            <div class="relative h-48 bg-gray-100">
+                                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="إقامة الشراقة" class="w-full h-full object-cover">
+                                <span class="absolute top-3 right-3 bg-blue-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow">طلب حجز مسبق</span>
+                            </div>
+                            <div class="p-5 flex-grow">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-[11px] text-tealCustom font-bold"><i class="fa-solid fa-map-marker-alt ml-1"></i>بلدية الشراقة (غرب الجزائر)</span>
+                                    <span class="text-xs text-tealCustom font-bold">إقامة كبرى فاخرة</span>
+                                </div>
+                                <h3 class="text-base font-bold text-navy mb-2">إقامة "الشراقة الكبرى"</h3>
+                                <p class="text-gray-500 text-xs leading-relaxed">مشروع استراتيجي واعد تحت الدراسة الفنية والهندسية المعمارية تمهيداً لبدء أشغال الأساسات قريباً.</p>
+                            </div>
+                            <div class="p-5 pt-0">
+                                <a href="https://wa.me/213557183255?text=أريد%20تسجيل%20اسمي%20للحجز%20المسبق%20في%20مشروع%20الشراقة" target="_blank" class="block w-full text-center bg-navy hover:bg-navy-light text-white py-2.5 rounded-lg text-xs font-bold transition">سجل اسمك للحجز المسبق</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- الصفحة 4: بناء الخواص وتسيير مشاريع الغير (Private Builders) -->
+            <div class="page-panel bg-iceBg flex items-center py-16">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <span class="text-tealCustom font-bold text-sm uppercase tracking-wider mb-2 block">خدمة الخواص</span>
+                            <h2 class="text-3xl font-extrabold text-navy mb-6">تبني على أرضك بمالك الخاص؟ نحن نتكفل بالمشروع من الألف إلى الياء</h2>
+                            <p class="text-gray-600 mb-6 leading-relaxed text-sm text-justify">
+                                صُممت هذه الخدمة المخصصة للزبائن الذين يمتلكون الأراضي والتمويل الذاتي ويرغبون في تشييد بنايتهم أو إقامتهم السكنية الخاصة بأقصى درجات الطمأنينة والاحترافية. تتولى المجموعة الجزائرية للاستثمار والتطوير <strong>ALGID</strong> مسؤولية المشروع بالكامل:
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-semibold text-gray-700 mb-6">
+                                <div class="flex items-center space-x-reverse space-x-2"><i class="fa-solid fa-pen-ruler text-tealCustom"></i> <span>تصميم المخططات الهندسية</span></div>
+                                <div class="flex items-center space-x-reverse space-x-2"><i class="fa-solid fa-file-signature text-tealCustom"></i> <span>استخراج التراخيص الإدارية</span></div>
+                                <div class="flex items-center space-x-reverse space-x-2"><i class="fa-solid fa-helmet-safety text-tealCustom"></i> <span>تسيير ومراقبة الورشة بدقة</span></div>
+                                <div class="flex items-center space-x-reverse space-x-2"><i class="fa-solid fa-key text-tealCustom"></i> <span>البناء والتشطيب والتسليم المباشر</span></div>
+                            </div>
+                            <a href="https://wa.me/213557183255?text=أريد%20معلومات%20أكثر%20عن%20خدمة%20بناء%20وتسيير%20مشاريع%20الخواص" target="_blank" class="bg-tealCustom hover:bg-tealCustom-dark text-white font-bold px-6 py-3 rounded-lg text-xs transition">استشر مهندس المشاريع لدينا</a>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow border border-gray-100">
+                            <h3 class="text-base font-bold text-navy mb-2 text-center">طلب استشارة دراسة مشروع</h3>
+                            <p class="text-gray-500 text-[11px] mb-4 text-center">اترك تفاصيل الأرض والميزانية وسيتواصل معك فريقنا الهندسي</p>
+                            <form class="space-y-3">
+                                <input type="text" class="w-full px-4 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none" placeholder="الاسم الكامل" required>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <input type="number" class="w-full px-4 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none" placeholder="المساحة بالمتر المربع" required>
+                                    <input type="text" class="w-full px-4 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none" placeholder="موقع الأرض (البلدية)" required>
+                                </div>
+                                <textarea rows="3" class="w-full px-4 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none" placeholder="وصف وتطلعات البناء (عدد الطوابق، إلخ)..."></textarea>
+                                <button type="submit" class="w-full bg-navy hover:bg-navy-dark text-white font-bold py-2.5 rounded-lg text-xs transition">إرسال طلب الاستشارة</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الصفحة 5: اتصل بنا (Contact & Maps) مع آراء العملاء والأسئلة الشائعة -->
+            <div class="page-panel bg-white flex items-center py-16 overflow-y-auto">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <!-- معلومات التواصل والأسئلة الشائعة -->
+                        <div>
+                            <span class="text-tealCustom font-bold text-sm uppercase tracking-wider mb-2 block">يسعدنا تواصلكم</span>
+                            <h2 class="text-2xl font-extrabold text-navy mb-4">قنوات الاتصال والموقع الجغرافي لـ ALGID</h2>
+                            
+                            <div class="space-y-4 mb-6">
+                                <div class="flex items-center space-x-reverse space-x-3">
+                                    <span class="w-10 h-10 bg-iceBg text-tealCustom flex items-center justify-center rounded-full text-base"><i class="fa-solid fa-phone"></i></span>
+                                    <div>
+                                        <span class="block text-[10px] text-gray-400">الاتصال المباشر</span>
+                                        <a href="tel:0557183255" class="font-bold text-navy text-sm hover:text-tealCustom transition" dir="ltr">0557 18 32 55</a>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-reverse space-x-3">
+                                    <span class="w-10 h-10 bg-iceBg text-[#25d366] flex items-center justify-center rounded-full text-base"><i class="fa-brands fa-whatsapp"></i></span>
+                                    <div>
+                                        <span class="block text-[10px] text-gray-400">الواتساب والمبيعات المباشرة</span>
+                                        <a href="https://wa.me/213557183255" target="_blank" class="font-bold text-navy text-sm hover:text-tealCustom transition" dir="ltr">0557 18 32 55</a>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-reverse space-x-3">
+                                    <span class="w-10 h-10 bg-iceBg text-tealCustom flex items-center justify-center rounded-full text-base"><i class="fa-solid fa-location-dot"></i></span>
+                                    <div>
+                                        <span class="block text-[10px] text-gray-400">العنوان وموقع المكاتب</span>
+                                        <span class="font-bold text-gray-700 text-xs">حي بن رضوان، الجزائر</span>
+                                        <a href="https://www.google.com/maps/place/36%C2%B045'07.3%22N+3%C2%B013'33.6%22E/@36.7520278,3.2260002,17z" target="_blank" class="text-[11px] text-tealCustom font-bold hover:underline block mt-0.5"><i class="fa-solid fa-map-marked-alt ml-1"></i> عرض على خرائط Google Maps (36°45'07.3"N 3°13'33.6"E)</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- الأسئلة الشائعة (FAQ) مدمجة لرفع مستوى المصداقية ومساعدة العميل -->
+                            <div class="mt-8 bg-gray-50 p-6 rounded-xl border border-gray-100">
+                                <h4 class="font-bold text-navy text-sm mb-4"><i class="fa-solid fa-circle-question text-tealCustom ml-1"></i> أسئلة شائعة وإجاباتها</h4>
+                                <div class="space-y-3 text-xs leading-relaxed text-gray-600">
+                                    <div>
+                                        <span class="font-bold text-navy block mb-0.5">س: كيف تتم كتابة عقود الشقق وتوثيقها؟</span>
+                                        <p>ج: جميع العقود في إقاماتنا تتم كتابتها وتوثيقها بشكل رسمي وآمن عن طريق الموثق العمومي (Notaire) لضمان كافة حقوق الملكية للمشتري.</p>
+                                    </div>
+                                    <div class="border-t border-gray-200/50 pt-2">
+                                        <span class="font-bold text-navy block mb-0.5">س: هل توجد تسهيلات أو دفع بالتقسيط؟</span>
+                                        <p>ج: نعم، لكل إقامة جدول مخصص لخطط الدفع بالتقسيط بما يتوافق مع وتيرة الأشغال والبناء لتسهيل تملك شقتكم.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- آراء العملاء ونموذج إرسال بريد تفاعلي -->
+                        <div class="flex flex-col justify-between">
+                            <!-- آراء العملاء الحقيقيين -->
+                            <div class="bg-iceBg p-6 rounded-xl border border-gray-200/50 mb-6">
+                                <h4 class="font-bold text-navy text-sm mb-4"><i class="fa-solid fa-quote-right text-tealCustom ml-1"></i> ماذا قال الملاك الجدد لإقاماتنا؟</h4>
+                                <div class="space-y-4">
+                                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                                        <p class="text-xs text-gray-600 italic">"استلمت شقتي في إقامة السكينة بحمادي بجميع المواصفات والتشطيبات المتفق عليها، والالتزام بالوقت كان ممتازاً."</p>
+                                        <span class="block text-[10px] text-navy font-bold mt-2 text-left">- السيد رياض، مالك عقاري</span>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                                        <p class="text-xs text-gray-600 italic">"تعاقدت مع ALGID لتسيير وبناء فيلاتي الخاصة على أرضي، ووفروا عليّ عناء البناء بتقديم مخططات رائعة ومتابعة دورية."</p>
+                                        <span class="block text-[10px] text-navy font-bold mt-2 text-left">- عائلة بلقاسم، بن مرابط</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- نموذج التواصل السريع السهل -->
+                            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-md">
+                                <h4 class="font-bold text-navy text-xs mb-3">أرسل استفسارك السريع إلى الإدارة</h4>
+                                <form class="space-y-3">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <input type="text" class="w-full px-4 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none" placeholder="الاسم" required>
+                                        <input type="tel" class="w-full px-4 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none" placeholder="رقم الهاتف" required>
+                                    </div>
+                                    <textarea rows="3" class="w-full px-4 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none" placeholder="اكتب نص الاستفسار هنا..." required></textarea>
+                                    <button type="submit" class="w-full bg-navy hover:bg-navy-dark text-white font-bold py-2 rounded-lg text-xs transition">إرسال الرسالة</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- التذييل المبسط (Footer) -->
+    <footer class="bg-navy-dark text-gray-400 py-6 border-t border-navy-light/10 text-center text-xs h-20 flex items-center justify-center">
+        <div class="max-w-7xl mx-auto px-4 w-full flex flex-col sm:flex-row items-center justify-between">
+            <p>© 2025 المجموعة الجزائرية للاستثمار والتطوير ALGID. جميع الحقوق محفوظة.</p>
+            <p class="text-[10px] text-gray-500 mt-2 sm:mt-0">حي بن رضوان وحي بن مرابط، الجزائر العاصمة.</p>
+        </div>
+    </footer>
+
+    <!-- سكربت تفعيل القائمة والانتقال الأفقي الذكي بين الصفحات العلوية -->
+    <script>
+        const slider = document.getElementById('main-slider');
+        const navButtons = document.querySelectorAll('.nav-btn');
+
+        // وظيفة الانتقال إلى صفحة معينة وتعديل سحب السلايدر أفقياً
+        function goToPage(index) {
+            // سحب الحاوية بنسبة مئوية لليسار بناءً على اتجاه الموقع العربي (RTL)
+            const percentage = index * 16.666; 
+            slider.style.transform = `translateX(${percentage}%)`;
+
+            // تعديل الألوان النشطة في قائمة الخيارات العلوية
+            navButtons.forEach((btn, idx) => {
+                if (idx === index) {
+                    btn.classList.add('bg-tealCustom', 'text-white');
+                    btn.classList.remove('hover:bg-gray-200');
+                } else {
+                    btn.classList.remove('bg-tealCustom', 'text-white');
+                    btn.classList.add('hover:bg-gray-200');
+                }
+            });
+        }
+
+        // إعدادات القائمة المتجاوبة للهواتف
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        menuBtn.addEventListener('click', toggleMobileMenu);
+    </script>
+</body>
+</html>
