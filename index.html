@@ -38,17 +38,29 @@
     <style>
         body {
             font-family: 'Cairo', sans-serif;
-            overflow: hidden; /* منع التمرير على مستوى الجسم الرئيسي لضمان عمل السلايدر بدقة */
+            overflow-x: hidden;
         }
-        /* تهيئة الشرائح وتأثير الانتقال ثلاثي الأبعاد السلس */
+        /* تصميم نظام السحب والتبديل الأفقي بين الصفحات */
+        .slider-wrapper {
+            display: flex;
+            width: 600%; /* يعتمد على عدد الصفحات الستة الرئيسية */
+            transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
+        }
+        /* تنسيق الصفحة كحاوية مستقلة ومتجاوبة في الطول */
         .page-panel {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
+            width: 16.666%;
+            flex-shrink: 0;
+            height: calc(100vh - 80px); /* طول الصفحة يملأ الشاشة المتبقية بعد الهيدر */
+            overflow-y: auto; /* يسمح بالتمرير العمودي داخل الصفحة نفسها فقط عند الحاجة في الهواتف */
             -webkit-overflow-scrolling: touch;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease;
+        }
+        @media (min-width: 1024px) {
+            .page-panel {
+                overflow-y: visible; /* شاشات الكمبيوتر لا تحتاج تمرير داخلي مستقل */
+                height: auto;
+                min-height: calc(100vh - 80px);
+            }
         }
     </style>
 </head>
@@ -112,12 +124,12 @@
         </div>
     </nav>
 
-    <!-- المحتوى الرئيسي المبني بنظام الشرائح السلسة -->
-    <main class="flex-grow pt-20 overflow-hidden relative w-full h-[calc(100vh-80px)]">
-        <div class="relative w-full h-full" id="slider-container">
+    <!-- المحتوى الرئيسي القابل للسحب الأفقي -->
+    <main class="flex-grow pt-20 overflow-hidden relative w-full">
+        <div class="slider-wrapper" id="main-slider">
 
             <!-- الصفحة 0: الرئيسية (Home) -->
-            <div id="page-0" class="page-panel bg-navy text-white flex items-center justify-center overflow-hidden pt-4 pb-12 lg:py-0 z-10 opacity-100 translate-x-0">
+            <div class="page-panel bg-navy text-white relative flex items-center justify-center overflow-hidden pt-4 pb-12 lg:py-0">
                 <div class="absolute inset-0 bg-cover bg-center mix-blend-overlay opacity-30" style="background-image: url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');"></div>
                 <div class="relative max-w-4xl mx-auto px-6 text-center z-10 my-auto">
                     <span class="inline-block bg-tealCustom/20 text-tealCustom-light border border-tealCustom/30 px-3 py-1 rounded-full text-xs font-semibold mb-4 lg:mb-6">ALGID | Think Values (نُفكر بالقيم)</span>
@@ -136,8 +148,8 @@
             </div>
 
             <!-- الصفحة 1: من نحن (About Us) -->
-            <div id="page-1" class="page-panel bg-white flex items-center pt-6 pb-16 lg:py-16 opacity-0 translate-x-full">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto">
+            <div class="page-panel bg-white flex items-center pt-6 pb-16 lg:py-16">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                         <div>
                             <span class="text-tealCustom font-bold text-xs uppercase tracking-wider mb-1 block">عن المجموعة</span>
@@ -172,12 +184,12 @@
             </div>
 
             <!-- الصفحة 2: خدماتنا (Services) -->
-            <div id="page-2" class="page-panel bg-iceBg flex items-center pt-6 pb-16 lg:py-16 opacity-0 translate-x-full">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto">
+            <div class="page-panel bg-iceBg flex items-center pt-6 pb-16 lg:py-16">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div class="text-center max-w-3xl mx-auto mb-6 lg:mb-12">
                         <span class="text-tealCustom font-bold text-xs uppercase tracking-wider mb-1 block">رؤية متكاملة</span>
                         <h2 class="text-2xl lg:text-3xl font-extrabold text-navy">الخدمات الاستثمارية والعقارية</h2>
-                        <p class="text-gray-500 mt-2 text-xs">نعمل على تقديم منظومة خدمات تغطي الاستثمار، الإعمار، وإدارة الأصول العقارية بكفاءة تامة.</p>
+                        <p class="text-gray-500 mt-1 text-xs">نعمل على تقديم منظومة خدمات تغطي الاستثمار، الإعمار، وإدارة الأصول العقارية بكفاءة تامة.</p>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-8">
                         <div class="bg-white p-5 lg:p-6 rounded-xl shadow border border-gray-100 hover:border-tealCustom transition">
@@ -212,7 +224,7 @@
             </div>
 
             <!-- الصفحة 3: إقاماتنا وسكناتنا (Residences & Statuses) -->
-            <div id="page-3" class="page-panel bg-white flex items-center pt-6 pb-16 lg:py-16 opacity-0 translate-x-full">
+            <div class="page-panel bg-white flex items-center pt-6 pb-16 lg:py-16">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div class="text-center max-w-3xl mx-auto mb-6 lg:mb-10">
                         <span class="text-tealCustom font-bold text-xs uppercase tracking-wider mb-1 block">محفظة أعمالنا الفخرية</span>
@@ -226,7 +238,7 @@
                         <div class="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-col justify-between">
                             <div class="relative h-40 lg:h-48 bg-gray-100">
                                 <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="إقامة السكينة" class="w-full h-full object-cover">
-                                <span class="absolute top-2 right-2 bg-red-600 text-white text-[10px] lg:text-[11px] font-bold px-2.5 py-1 rounded-full shadow">بيعت بالكامل 100%</span>
+                                <span class="absolute top-2 right-2 bg-red-600 text-white text-[10px] lg:text-[11px] font-bold px-2 py-1 rounded-full shadow">بيعت بالكامل 100%</span>
                             </div>
                             <div class="p-4 flex-grow">
                                 <div class="flex justify-between items-center mb-1">
@@ -245,7 +257,7 @@
                         <div class="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-col justify-between">
                             <div class="relative h-40 lg:h-48 bg-gray-100">
                                 <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="إقامة الألفة" class="w-full h-full object-cover">
-                                <span class="absolute top-2 right-2 bg-red-600 text-white text-[10px] lg:text-[11px] font-bold px-2.5 py-1 rounded-full shadow">بيعت بالكامل 100%</span>
+                                <span class="absolute top-2 right-2 bg-red-600 text-white text-[10px] lg:text-[11px] font-bold px-2 py-1 rounded-full shadow">بيعت بالكامل 100%</span>
                             </div>
                             <div class="p-4 flex-grow">
                                 <div class="flex justify-between items-center mb-1">
@@ -264,7 +276,7 @@
                         <div class="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-col justify-between">
                             <div class="relative h-40 lg:h-48 bg-gray-100">
                                 <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="إقامة تازيري" class="w-full h-full object-cover">
-                                <span class="absolute top-2 right-2 bg-emerald-600 text-white text-[10px] lg:text-[11px] font-bold px-2.5 py-1 rounded-full shadow">متوفر شقق للبيع</span>
+                                <span class="absolute top-2 right-2 bg-emerald-600 text-white text-[10px] lg:text-[11px] font-bold px-2 py-1 rounded-full shadow">متوفر شقق للبيع</span>
                             </div>
                             <div class="p-4 flex-grow">
                                 <div class="flex justify-between items-center mb-1">
@@ -283,7 +295,7 @@
                         <div class="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-col justify-between">
                             <div class="relative h-40 lg:h-48 bg-gray-100">
                                 <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="إقامة الأنس" class="w-full h-full object-cover">
-                                <span class="absolute top-2 right-2 bg-emerald-600 text-white text-[10px] lg:text-[11px] font-bold px-2.5 py-1 rounded-full shadow">متوفر شقق للبيع</span>
+                                <span class="absolute top-2 right-2 bg-emerald-600 text-white text-[10px] lg:text-[11px] font-bold px-2 py-1 rounded-full shadow">متوفر شقق للبيع</span>
                             </div>
                             <div class="p-4 flex-grow">
                                 <div class="flex justify-between items-center mb-1">
@@ -302,7 +314,7 @@
                         <div class="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-col justify-between">
                             <div class="relative h-40 lg:h-48 bg-gray-100">
                                 <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="إقامة الجنان" class="w-full h-full object-cover">
-                                <span class="absolute top-2 right-2 bg-emerald-600 text-white text-[10px] lg:text-[11px] font-bold px-2.5 py-1 rounded-full shadow">متوفر شقق للبيع</span>
+                                <span class="absolute top-2 right-2 bg-emerald-600 text-white text-[10px] lg:text-[11px] font-bold px-2 py-1 rounded-full shadow">متوفر شقق للبيع</span>
                             </div>
                             <div class="p-4 flex-grow">
                                 <div class="flex justify-between items-center mb-1">
@@ -321,7 +333,7 @@
                         <div class="bg-white rounded-xl overflow-hidden shadow border border-gray-100 flex flex-col justify-between">
                             <div class="relative h-40 lg:h-48 bg-gray-100">
                                 <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="إقامة الشراقة" class="w-full h-full object-cover">
-                                <span class="absolute top-2 right-2 bg-blue-600 text-white text-[10px] lg:text-[11px] font-bold px-2.5 py-1 rounded-full shadow">طلب حجز مسبق</span>
+                                <span class="absolute top-2 right-2 bg-blue-600 text-white text-[10px] lg:text-[11px] font-bold px-2 py-1 rounded-full shadow">طلب حجز مسبق</span>
                             </div>
                             <div class="p-4 flex-grow">
                                 <div class="flex justify-between items-center mb-1">
@@ -341,8 +353,8 @@
             </div>
 
             <!-- الصفحة 4: بناء الخواص وتسيير مشاريع الغير (Private Builders) -->
-            <div id="page-4" class="page-panel bg-iceBg flex items-center pt-6 pb-16 lg:py-16 opacity-0 translate-x-full">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto">
+            <div class="page-panel bg-iceBg flex items-center pt-6 pb-16 lg:py-16">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                         <div>
                             <span class="text-tealCustom font-bold text-xs uppercase tracking-wider mb-1 block">خدمة الخواص</span>
@@ -376,7 +388,7 @@
             </div>
 
             <!-- الصفحة 5: اتصل بنا (Contact & Maps) مع مستطيل الخرائط التفاعلي المدمج -->
-            <div id="page-5" class="page-panel bg-white flex items-center pt-6 pb-16 lg:py-16 opacity-0 translate-x-full">
+            <div class="page-panel bg-white flex items-center pt-6 pb-16 lg:py-16">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
                         <!-- معلومات التواصل والخرائط التفاعلية المدمجة -->
@@ -465,28 +477,18 @@
         </div>
     </footer>
 
-    <!-- سكربت تفعيل القائمة والانتقال الأفقي الذكي والسلس والخالي من مشاكل التصفح -->
+    <!-- سكربت تفعيل القائمة والانتقال الأفقي الذكي بين الصفحات العلوية -->
     <script>
+        const slider = document.getElementById('main-slider');
         const navButtons = document.querySelectorAll('.nav-btn');
-        const panels = document.querySelectorAll('.page-panel');
 
-        // مصفوفة لتسهيل تبديل الفئات الجمالية للشرائح أفقياً
+        // وظيفة الانتقال إلى صفحة معينة وتعديل سحب السلايدر أفقياً
         function goToPage(index) {
-            panels.forEach((panel, idx) => {
-                if (idx === index) {
-                    // الصفحة النشطة: تظهر فجأة وتتحرك لمكانها الأصلي
-                    panel.className = "page-panel flex items-center pt-6 pb-16 lg:py-16 opacity-100 translate-x-0 z-10";
-                    panel.scrollTop = 0; // إرجاع السكرول لأعلى الصفحة دائماً عند الدخول إليها
-                } else if (idx < index) {
-                    // الصفحات السابقة: تنسحب وتختفي إلى اليسار
-                    panel.className = "page-panel flex items-center pt-6 pb-16 lg:py-16 opacity-0 -translate-x-full z-0 pointer-events-none";
-                } else {
-                    // الصفحات اللاحقة: تنتظر في اليمين وتختفي
-                    panel.className = "page-panel flex items-center pt-6 pb-16 lg:py-16 opacity-0 translate-x-full z-0 pointer-events-none";
-                }
-            });
+            // سحب الحاوية بنسبة مئوية لليسار بناءً على اتجاه الموقع العربي (RTL)
+            const percentage = index * 16.666; 
+            slider.style.transform = `translateX(${percentage}%)`;
 
-            // تحديث الألوان النشطة لأزرار الهيدر العلوي للكمبيوتر
+            // تعديل الألوان النشطة في قائمة الخيارات العلوية (للكمبيوتر)
             navButtons.forEach((btn, idx) => {
                 if (idx === index) {
                     btn.classList.add('bg-tealCustom', 'text-white');
@@ -495,6 +497,12 @@
                     btn.classList.remove('bg-tealCustom', 'text-white');
                     btn.classList.add('hover:bg-gray-200');
                 }
+            });
+
+            // إعادة تعيين التمرير العمودي إلى الأعلى دائماً لكل صفحة عند الانتقال إليها
+            const panels = document.querySelectorAll('.page-panel');
+            panels.forEach(panel => {
+                panel.scrollTop = 0;
             });
         }
 
@@ -507,9 +515,6 @@
         }
 
         menuBtn.addEventListener('click', toggleMobileMenu);
-
-        // تشغيل الصفحة الأولى بشكل افتراضي صحيح عند تحميل الموقع
-        goToPage(0);
     </script>
 </body>
 </html>
